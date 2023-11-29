@@ -1,4 +1,4 @@
-module seg7 (input [3:0] seg0, input [3:0] seg1, input [3:0] seg2,input [3:0] seg3, input [3:0] seg4, input [3:0] seg5,
+module display (input [3:0] seg0, input [3:0] seg1, input [3:0] seg2,input [3:0] seg3, input [3:0] seg4, input [3:0] seg5,
     output [6:0] HEX0, output [6:0] HEX1, output [6:0] HEX2, output [6:0] HEX3, output [6:0] HEX4, output [6:0] HEX5
 );
 
