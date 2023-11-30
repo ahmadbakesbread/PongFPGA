@@ -1,0 +1,234 @@
+module Pong (
+    input MAX10_CLK1_50,
+
+    output reg VGA_HS,
+    output reg VGA_VS,
+    output reg [3:0] VGA_R,
+    output reg [3:0] VGA_G,
+    output reg [3:0] VGA_B,
+
+    input [9:0] SW,
+    output [6:0] HEX5,
+    output [6:0] HEX4,
+    output [6:0] HEX1,
+    output [6:0] HEX0,
+
+    output reg [0:0] GPIO,
+    output reg [2:2] ARDUINO_IO
+);
+
+    // Constants for game sizes in pixels
+    parameter integer ballSize = 16;
+    parameter integer paletHeight = 128;
+    parameter integer paletWidth = 16;
+
+    // Constants for game colors
+    parameter integer ballColor = 16'hC3F;
+    parameter integer lPaletColor = 16'h4BF;
+    parameter integer rPaletColor = 16'hF44;
+    parameter integer backgroundColor = 16'hFFF;
+
+    reg VGA_clk;
+    reg [9:0] VGA_x;
+    reg [9:0] VGA_y;
+    reg pixel;
+    reg [11:0] color;
+
+    reg [9:0] lPalet;
+    reg [9:0] rPalet;
+    wire lSW = SW[9];
+    wire rSW = SW[0];
+    wire pause = SW[5];
+
+    reg gameTick;
+    reg [19:0] tickCounter;
+
+    reg [1:0] direction;
+    parameter l_u = 2'b00, l_d = 2'b01, r_u = 2'b10, r_d = 2'b11;
+
+    reg [9:0] ball_x;
+    reg [9:0] ball_y;
+    reg [9:0] lScore;
+    reg [9:0] rScore;
+
+    reg [19:0] currentSpeed;
+    reg gameStart;
+
+    always @(posedge MAX10_CLK1_50) begin
+        VGA_clk <= ~VGA_clk;
+    end
+
+    VGA VGA_Sub (
+        .clk(MAX10_CLK1_50),
+        .HS(VGA_HS),
+        .VS(VGA_VS),
+        .RGB_in(color),
+        .R_out(VGA_R),
+        .G_out(VGA_G),
+        .B_out(VGA_B),
+        .pixel(pixel),
+        .x(VGA_x),
+        .y(VGA_y)
+    );
+
+    always @(VGA_x or VGA_y) begin
+        color <= backgroundColor;
+        pixel <= 1'b0;
+        if ((VGA_x <= paletWidth) && (VGA_y >= lPalet) && (VGA_y <= (lPalet + paletHeight))) begin
+            color <= lPaletColor;
+        end else if ((VGA_x >= (639 - paletWidth)) && (VGA_y >= rPalet) && (VGA_y <= (rPalet + paletHeight))) begin
+            color <= rPaletColor;
+        end else if ((VGA_x >= ball_x) && (VGA_x <= (ball_x + ballSize)) && 
+                    (VGA_y >= ball_y) && (VGA_y <= (ball_y + ballSize))) begin
+            color <= ballColor;
+        end
+    end
+
+    always @(posedge MAX10_CLK1_50) begin
+        if (pause == 1'b0) begin
+            if (tickCounter == currentSpeed) begin
+                tickCounter <= 20'b0;
+                gameTick <= ~gameTick;
+            end else begin
+                tickCounter <= tickCounter + 1;
+            end
+        end
+    end
+
+    always @(posedge gameTick) begin
+        if (lSW == 1'b1) begin
+            if (lPalet > 0) begin
+                lPalet <= lPalet - 1;
+            end
+        end else begin
+            if (lPalet < (480 - paletHeight)) begin
+                lPalet <= lPalet + 1;
+            end
+        end
+
+        if (rSW == 1'b1) begin
+            if (rPalet > 0) begin
+                rPalet <= rPalet - 1;
+            end
+        end else begin
+            if (rPalet < (480 - paletHeight)) begin
+                rPalet <= rPalet + 1;
+            end
+        end
+    end
+
+    always @(posedge gameTick) begin
+        if (gameStart == 1'b1) begin
+            if ((direction == l_u) || (direction == l_d)) begin
+                ball_x <= ball_x - 1;
+                if ((ball_x <= (paletWidth + 1)) && ((ball_y <= (lPalet + paletHeight)) && (ball_y >= lPalet) ||
+                    ((ball_y + ballSize) <= (lPalet + paletHeight)) && ((ball_y + ballSize) >= lPalet))) begin
+                    case(direction)
+                        l_d: direction <= r_d;
+                        l_u: direction <= r_u;
+                        default: direction <= r_u;
+                    endcase
+                    if (currentSpeed >= 5000) begin
+                        currentSpeed <= currentSpeed - 5000;
+                    end
+                end
+            end
+            if ((direction == r_u) || (direction == r_d)) begin
+                ball_x <= ball_x + 1;
+                if ((ball_x >= (639 - paletWidth - 1 - ballSize)) && ((ball_y <= (rPalet + paletHeight)) && (ball_y >= rPalet) ||
+                    ((ball_y + ballSize) <= (rPalet + paletHeight)) && ((ball_y + ballSize) >= rPalet))) begin
+                    case(direction)
+                        r_d: direction <= l_d;
+                        r_u: direction <= l_u;
+                        default: direction <= l_u;
+                    endcase
+                    if (currentSpeed >= 5000) begin
+                        currentSpeed <= currentSpeed - 5000;
+                    end
+                end
+            end
+            if ((direction == l_u) || (direction == r_u)) begin
+                ball_y <= ball_y - 1;
+                if (ball_y == 0) begin
+                    case(direction)
+                        l_u: direction <= l_d;
+                        r_u: direction <= r_d;
+                        default: direction <= r_d;
+                    endcase
+                end
+            end
+            if ((direction == l_d) || (direction == r_d)) begin
+                ball_y <= ball_y + 1;
+                if (ball_y == (480 - ballSize)) begin
+                    case(direction)
+                        r_d: direction <= r_u;
+                        l_d: direction <= l_u;
+                        default: direction <= l_u;
+                    endcase
+                end
+            end
+            if (ball_x == 0) begin
+                direction <= r_u;
+                ball_x <= 20;
+                ball_y <= 300;
+                rScore <= rScore + 1;
+                currentSpeed <= 20'd125000;
+            end
+            if (ball_x == (639 - ballSize)) begin
+                direction <= l_u;
+                ball_x <= 619;
+                ball_y <= 300;
+                lScore <= lScore + 1;
+                currentSpeed <= 20'd125000;
+            end
+            if ((lScore == 10) || (rScore == 10)) begin
+                gameStart <= 1'b0;
+            end
+        end else begin
+            direction <= r_u;
+            ball_x <= 20;
+            ball_y <= 300;
+            lScore <= 10'd0;
+            rScore <= 10'd0;
+            gameStart <= 1'b1;
+        end
+    end
+
+    seg7 seg7_sub (
+        .A(rScore),
+        .B(10'b0),
+        .C(10'b0),
+        .D(10'b0),
+        .E(10'b0),
+        .F(lScore),
+        .G(10'b0),
+        .HEX0(HEX0),
+        .HEX5(HEX5)
+    );
+
+    always @(lScore or rScore) begin
+        case(lScore)
+            1 to 9: begin
+                HEX1 <= 7'b1111111;
+                HEX4 <= 7'b1111111;
+            end
+            10: begin
+                HEX4 <= ~7'b1100010;
+                HEX1 <= ~7'b0001000;
+            end
+            0: ;
+        endcase
+        case(rScore)
+            1 to 9: begin
+                HEX1 <= 7'b1111111;
+                HEX4 <= 7'b1111111;
+            end
+            10: begin
+                HEX1 <= ~7'b1100010;
+                HEX4 <= ~7'b0001000;
+            end
+            0: ;
+        endcase
+    end
+
+endmodule

@@ -1,0 +1,499 @@
+Analysis & Synthesis report for PongFPGA
+Wed Nov 29 19:18:25 2023
+Quartus Prime Version 22.1std.2 Build 922 07/20/2023 SC Lite Edition
+
+
+---------------------
+; Table of Contents ;
+---------------------
+  1. Legal Notice
+  2. Analysis & Synthesis Summary
+  3. Analysis & Synthesis Settings
+  4. Parallel Compilation
+  5. Analysis & Synthesis Source Files Read
+  6. Analysis & Synthesis Resource Usage Summary
+  7. Analysis & Synthesis Resource Utilization by Entity
+  8. Registers Removed During Synthesis
+  9. General Register Statistics
+ 10. Inverted Register Statistics
+ 11. Multiplexer Restructuring Statistics (Restructuring Performed)
+ 12. Parameter Settings for User Entity Instance: Top-level Entity: |Pong
+ 13. Port Connectivity Checks: "display:display_inst"
+ 14. Port Connectivity Checks: "VGA:vga_inst"
+ 15. Post-Synthesis Netlist Statistics for Top Partition
+ 16. Elapsed Time Per Partition
+ 17. Analysis & Synthesis Messages
+
+
+
+----------------
+; Legal Notice ;
+----------------
+Copyright (C) 2023  Intel Corporation. All rights reserved.
+Your use of Intel Corporation's design tools, logic functions 
+and other software and tools, and any partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Intel Program License 
+Subscription Agreement, the Intel Quartus Prime License Agreement,
+the Intel FPGA IP License Agreement, or other applicable license
+agreement, including, without limitation, that your use is for
+the sole purpose of programming logic devices manufactured by
+Intel and sold by Intel or its authorized distributors.  Please
+refer to the applicable agreement for further details, at
+https://fpgasoftware.intel.com/eula.
+
+
+
++-------------------------------------------------------------------------------------+
+; Analysis & Synthesis Summary                                                        ;
++------------------------------------+------------------------------------------------+
+; Analysis & Synthesis Status        ; Successful - Wed Nov 29 19:18:25 2023          ;
+; Quartus Prime Version              ; 22.1std.2 Build 922 07/20/2023 SC Lite Edition ;
+; Revision Name                      ; PongFPGA                                       ;
+; Top-level Entity Name              ; Pong                                           ;
+; Family                             ; MAX 10                                         ;
+; Total logic elements               ; 383                                            ;
+;     Total combinational functions  ; 376                                            ;
+;     Dedicated logic registers      ; 125                                            ;
+; Total registers                    ; 125                                            ;
+; Total pins                         ; 53                                             ;
+; Total virtual pins                 ; 0                                              ;
+; Total memory bits                  ; 0                                              ;
+; Embedded Multiplier 9-bit elements ; 0                                              ;
+; Total PLLs                         ; 0                                              ;
+; UFM blocks                         ; 0                                              ;
+; ADC blocks                         ; 0                                              ;
++------------------------------------+------------------------------------------------+
+
+
++------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Settings                                                                              ;
++------------------------------------------------------------------+--------------------+--------------------+
+; Option                                                           ; Setting            ; Default Value      ;
++------------------------------------------------------------------+--------------------+--------------------+
+; Device                                                           ; 10M50DAF484C6GES   ;                    ;
+; Top-level entity name                                            ; Pong               ; PongFPGA           ;
+; Family name                                                      ; MAX 10             ; Cyclone V          ;
+; Use smart compilation                                            ; Off                ; Off                ;
+; Enable parallel Assembler and Timing Analyzer during compilation ; On                 ; On                 ;
+; Enable compact report table                                      ; Off                ; Off                ;
+; Restructure Multiplexers                                         ; Auto               ; Auto               ;
+; Create Debugging Nodes for IP Cores                              ; Off                ; Off                ;
+; Preserve fewer node names                                        ; On                 ; On                 ;
+; Intel FPGA IP Evaluation Mode                                    ; Enable             ; Enable             ;
+; Verilog Version                                                  ; Verilog_2001       ; Verilog_2001       ;
+; VHDL Version                                                     ; VHDL_1993          ; VHDL_1993          ;
+; State Machine Processing                                         ; Auto               ; Auto               ;
+; Safe State Machine                                               ; Off                ; Off                ;
+; Extract Verilog State Machines                                   ; On                 ; On                 ;
+; Extract VHDL State Machines                                      ; On                 ; On                 ;
+; Ignore Verilog initial constructs                                ; Off                ; Off                ;
+; Iteration limit for constant Verilog loops                       ; 5000               ; 5000               ;
+; Iteration limit for non-constant Verilog loops                   ; 250                ; 250                ;
+; Add Pass-Through Logic to Inferred RAMs                          ; On                 ; On                 ;
+; Infer RAMs from Raw Logic                                        ; On                 ; On                 ;
+; Parallel Synthesis                                               ; On                 ; On                 ;
+; DSP Block Balancing                                              ; Auto               ; Auto               ;
+; NOT Gate Push-Back                                               ; On                 ; On                 ;
+; Power-Up Don't Care                                              ; On                 ; On                 ;
+; Remove Redundant Logic Cells                                     ; Off                ; Off                ;
+; Remove Duplicate Registers                                       ; On                 ; On                 ;
+; Ignore CARRY Buffers                                             ; Off                ; Off                ;
+; Ignore CASCADE Buffers                                           ; Off                ; Off                ;
+; Ignore GLOBAL Buffers                                            ; Off                ; Off                ;
+; Ignore ROW GLOBAL Buffers                                        ; Off                ; Off                ;
+; Ignore LCELL Buffers                                             ; Off                ; Off                ;
+; Ignore SOFT Buffers                                              ; On                 ; On                 ;
+; Limit AHDL Integers to 32 Bits                                   ; Off                ; Off                ;
+; Optimization Technique                                           ; Balanced           ; Balanced           ;
+; Carry Chain Length                                               ; 70                 ; 70                 ;
+; Auto Carry Chains                                                ; On                 ; On                 ;
+; Auto Open-Drain Pins                                             ; On                 ; On                 ;
+; Perform WYSIWYG Primitive Resynthesis                            ; Off                ; Off                ;
+; Auto ROM Replacement                                             ; On                 ; On                 ;
+; Auto RAM Replacement                                             ; On                 ; On                 ;
+; Auto DSP Block Replacement                                       ; On                 ; On                 ;
+; Auto Shift Register Replacement                                  ; Auto               ; Auto               ;
+; Allow Shift Register Merging across Hierarchies                  ; Auto               ; Auto               ;
+; Auto Clock Enable Replacement                                    ; On                 ; On                 ;
+; Strict RAM Replacement                                           ; Off                ; Off                ;
+; Allow Synchronous Control Signals                                ; On                 ; On                 ;
+; Force Use of Synchronous Clear Signals                           ; Off                ; Off                ;
+; Auto RAM Block Balancing                                         ; On                 ; On                 ;
+; Auto RAM to Logic Cell Conversion                                ; Off                ; Off                ;
+; Auto Resource Sharing                                            ; Off                ; Off                ;
+; Allow Any RAM Size For Recognition                               ; Off                ; Off                ;
+; Allow Any ROM Size For Recognition                               ; Off                ; Off                ;
+; Allow Any Shift Register Size For Recognition                    ; Off                ; Off                ;
+; Use LogicLock Constraints during Resource Balancing              ; On                 ; On                 ;
+; Ignore translate_off and synthesis_off directives                ; Off                ; Off                ;
+; Timing-Driven Synthesis                                          ; On                 ; On                 ;
+; Report Parameter Settings                                        ; On                 ; On                 ;
+; Report Source Assignments                                        ; On                 ; On                 ;
+; Report Connectivity Checks                                       ; On                 ; On                 ;
+; Ignore Maximum Fan-Out Assignments                               ; Off                ; Off                ;
+; Synchronization Register Chain Length                            ; 2                  ; 2                  ;
+; Power Optimization During Synthesis                              ; Normal compilation ; Normal compilation ;
+; HDL message level                                                ; Level2             ; Level2             ;
+; Suppress Register Optimization Related Messages                  ; Off                ; Off                ;
+; Number of Removed Registers Reported in Synthesis Report         ; 5000               ; 5000               ;
+; Number of Swept Nodes Reported in Synthesis Report               ; 5000               ; 5000               ;
+; Number of Inverted Registers Reported in Synthesis Report        ; 100                ; 100                ;
+; Clock MUX Protection                                             ; On                 ; On                 ;
+; Auto Gated Clock Conversion                                      ; Off                ; Off                ;
+; Block Design Naming                                              ; Auto               ; Auto               ;
+; SDC constraint protection                                        ; Off                ; Off                ;
+; Synthesis Effort                                                 ; Auto               ; Auto               ;
+; Shift Register Replacement - Allow Asynchronous Clear Signal     ; On                 ; On                 ;
+; Pre-Mapping Resynthesis Optimization                             ; Off                ; Off                ;
+; Analysis & Synthesis Message Level                               ; Medium             ; Medium             ;
+; Disable Register Merging Across Hierarchies                      ; Auto               ; Auto               ;
+; Resource Aware Inference For Block RAM                           ; On                 ; On                 ;
++------------------------------------------------------------------+--------------------+--------------------+
+
+
++------------------------------------------+
+; Parallel Compilation                     ;
++----------------------------+-------------+
+; Processors                 ; Number      ;
++----------------------------+-------------+
+; Number detected on machine ; 16          ;
+; Maximum allowed            ; 16          ;
+;                            ;             ;
+; Average used               ; 1.00        ;
+; Maximum used               ; 16          ;
+;                            ;             ;
+; Usage by Processor         ; % Time Used ;
+;     Processor 1            ; 100.0%      ;
+;     Processors 2-16        ;   0.0%      ;
++----------------------------+-------------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Source Files Read                                                                                                        ;
++----------------------------------+-----------------+------------------------+-------------------------------------------------------+---------+
+; File Name with User-Entered Path ; Used in Netlist ; File Type              ; File Name with Absolute Path                          ; Library ;
++----------------------------------+-----------------+------------------------+-------------------------------------------------------+---------+
+; display.v                        ; yes             ; User Verilog HDL File  ; C:/Users/Mohammad Mahfooz/Projects/PongFPGA/display.v ;         ;
+; VGA.v                            ; yes             ; User Verilog HDL File  ; C:/Users/Mohammad Mahfooz/Projects/PongFPGA/VGA.v     ;         ;
+; Pong.v                           ; yes             ; User Verilog HDL File  ; C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v    ;         ;
++----------------------------------+-----------------+------------------------+-------------------------------------------------------+---------+
+
+
++---------------------------------------------------------+
+; Analysis & Synthesis Resource Usage Summary             ;
++---------------------------------------------+-----------+
+; Resource                                    ; Usage     ;
++---------------------------------------------+-----------+
+; Estimated Total logic elements              ; 383       ;
+;                                             ;           ;
+; Total combinational functions               ; 376       ;
+; Logic element usage by number of LUT inputs ;           ;
+;     -- 4 input functions                    ; 104       ;
+;     -- 3 input functions                    ; 150       ;
+;     -- <=2 input functions                  ; 122       ;
+;                                             ;           ;
+; Logic elements by mode                      ;           ;
+;     -- normal mode                          ; 162       ;
+;     -- arithmetic mode                      ; 214       ;
+;                                             ;           ;
+; Total registers                             ; 125       ;
+;     -- Dedicated logic registers            ; 125       ;
+;     -- I/O registers                        ; 0         ;
+;                                             ;           ;
+; I/O pins                                    ; 53        ;
+;                                             ;           ;
+; Embedded Multiplier 9-bit elements          ; 0         ;
+;                                             ;           ;
+; Maximum fan-out node                        ; clk~input ;
+; Maximum fan-out                             ; 54        ;
+; Total fan-out                               ; 1486      ;
+; Average fan-out                             ; 2.45      ;
++---------------------------------------------+-----------+
+
+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Resource Utilization by Entity                                                                                                                                                                                       ;
++----------------------------+---------------------+---------------------------+-------------+------------+--------------+---------+-----------+------+--------------+------------+----------------------------+-------------+--------------+
+; Compilation Hierarchy Node ; Combinational ALUTs ; Dedicated Logic Registers ; Memory Bits ; UFM Blocks ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; Pins ; Virtual Pins ; ADC blocks ; Full Hierarchy Name        ; Entity Name ; Library Name ;
++----------------------------+---------------------+---------------------------+-------------+------------+--------------+---------+-----------+------+--------------+------------+----------------------------+-------------+--------------+
+; |Pong                      ; 376 (281)           ; 125 (69)                  ; 0           ; 0          ; 0            ; 0       ; 0         ; 53   ; 0            ; 0          ; |Pong                      ; Pong        ; work         ;
+;    |VGA:vga_inst|          ; 81 (81)             ; 56 (56)                   ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |Pong|VGA:vga_inst         ; VGA         ; work         ;
+;    |display:display_inst|  ; 14 (14)             ; 0 (0)                     ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |Pong|display:display_inst ; display     ; work         ;
++----------------------------+---------------------+---------------------------+-------------+------------+--------------+---------+-----------+------+--------------+------------+----------------------------+-------------+--------------+
+Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
+
+
++---------------------------------------------------------------+
+; Registers Removed During Synthesis                            ;
++---------------------------------------+-----------------------+
+; Register name                         ; Reason for Removal    ;
++---------------------------------------+-----------------------+
+; ball_y[0]                             ; Merged with ball_x[0] ;
+; Total Number of Removed Registers = 1 ;                       ;
++---------------------------------------+-----------------------+
+
+
++------------------------------------------------------+
+; General Register Statistics                          ;
++----------------------------------------------+-------+
+; Statistic                                    ; Value ;
++----------------------------------------------+-------+
+; Total registers                              ; 125   ;
+; Number of registers using Synchronous Clear  ; 37    ;
+; Number of registers using Synchronous Load   ; 0     ;
+; Number of registers using Asynchronous Clear ; 0     ;
+; Number of registers using Asynchronous Load  ; 0     ;
+; Number of registers using Clock Enable       ; 20    ;
+; Number of registers using Preset             ; 0     ;
++----------------------------------------------+-------+
+
+
++--------------------------------------------------+
+; Inverted Register Statistics                     ;
++----------------------------------------+---------+
+; Inverted Register                      ; Fan out ;
++----------------------------------------+---------+
+; ball_x[4]                              ; 8       ;
+; ball_x[2]                              ; 4       ;
+; ball_y[8]                              ; 10      ;
+; ball_y[5]                              ; 10      ;
+; ball_y[3]                              ; 9       ;
+; ball_y[2]                              ; 9       ;
+; Total number of inverted registers = 6 ;         ;
++----------------------------------------+---------+
+
+
++-------------------------------------------------------------------------------------------------------------------------------------------+
+; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                            ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+-----------------------------+
+; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output  ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+-----------------------------+
+; 3:1                ; 2 bits    ; 4 LEs         ; 4 LEs                ; 0 LEs                  ; Yes        ; |Pong|VGA:vga_inst|G_out[3] ;
+; 3:1                ; 10 bits   ; 20 LEs        ; 10 LEs               ; 10 LEs                 ; Yes        ; |Pong|lPalet[9]             ;
+; 3:1                ; 10 bits   ; 20 LEs        ; 10 LEs               ; 10 LEs                 ; Yes        ; |Pong|rPalet[2]             ;
+; 4:1                ; 8 bits    ; 16 LEs        ; 16 LEs               ; 0 LEs                  ; Yes        ; |Pong|ball_x[9]             ;
+; 4:1                ; 5 bits    ; 10 LEs        ; 10 LEs               ; 0 LEs                  ; Yes        ; |Pong|ball_y[9]             ;
+; 4:1                ; 2 bits    ; 4 LEs         ; 4 LEs                ; 0 LEs                  ; Yes        ; |Pong|ball_x[4]             ;
+; 4:1                ; 4 bits    ; 8 LEs         ; 8 LEs                ; 0 LEs                  ; Yes        ; |Pong|ball_y[8]             ;
+; 3:1                ; 2 bits    ; 4 LEs         ; 4 LEs                ; 0 LEs                  ; No         ; |Pong|VGA:vga_inst|R_out    ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+-----------------------------+
+
+
++----------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: Top-level Entity: |Pong ;
++-----------------+--------------+-------------------------------------+
+; Parameter Name  ; Value        ; Type                                ;
++-----------------+--------------+-------------------------------------+
+; ballSize        ; 16           ; Signed Integer                      ;
+; paletHeight     ; 128          ; Signed Integer                      ;
+; paletWidth      ; 16           ; Signed Integer                      ;
+; ballColor       ; 110000111111 ; Unsigned Binary                     ;
+; lPaletColor     ; 010010111111 ; Unsigned Binary                     ;
+; rPaletColor     ; 111101000100 ; Unsigned Binary                     ;
+; backgroundColor ; 111111111111 ; Unsigned Binary                     ;
++-----------------+--------------+-------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "display:display_inst"                                                               ;
++------+--------+----------+-------------------------------------------------------------------------------------+
+; Port ; Type   ; Severity ; Details                                                                             ;
++------+--------+----------+-------------------------------------------------------------------------------------+
+; seg1 ; Input  ; Info     ; Stuck at GND                                                                        ;
+; seg2 ; Input  ; Info     ; Stuck at GND                                                                        ;
+; seg3 ; Input  ; Info     ; Stuck at GND                                                                        ;
+; seg4 ; Input  ; Info     ; Stuck at GND                                                                        ;
+; HEX2 ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
+; HEX3 ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
++------+--------+----------+-------------------------------------------------------------------------------------+
+
+
++----------------------------------------------+
+; Port Connectivity Checks: "VGA:vga_inst"     ;
++------------+-------+----------+--------------+
+; Port       ; Type  ; Severity ; Details      ;
++------------+-------+----------+--------------+
+; RGB_in[10] ; Input ; Info     ; Stuck at VCC ;
+; RGB_in[2]  ; Input ; Info     ; Stuck at VCC ;
++------------+-------+----------+--------------+
+
+
++-----------------------------------------------------+
+; Post-Synthesis Netlist Statistics for Top Partition ;
++-----------------------+-----------------------------+
+; Type                  ; Count                       ;
++-----------------------+-----------------------------+
+; boundary_port         ; 53                          ;
+; cycloneiii_ff         ; 125                         ;
+;     ENA               ; 20                          ;
+;     SCLR              ; 37                          ;
+;     plain             ; 68                          ;
+; cycloneiii_lcell_comb ; 380                         ;
+;     arith             ; 214                         ;
+;         2 data inputs ; 79                          ;
+;         3 data inputs ; 135                         ;
+;     normal            ; 166                         ;
+;         0 data inputs ; 4                           ;
+;         1 data inputs ; 10                          ;
+;         2 data inputs ; 33                          ;
+;         3 data inputs ; 15                          ;
+;         4 data inputs ; 104                         ;
+;                       ;                             ;
+; Max LUT depth         ; 6.10                        ;
+; Average LUT depth     ; 3.23                        ;
++-----------------------+-----------------------------+
+
+
++-------------------------------+
+; Elapsed Time Per Partition    ;
++----------------+--------------+
+; Partition Name ; Elapsed Time ;
++----------------+--------------+
+; Top            ; 00:00:00     ;
++----------------+--------------+
+
+
++-------------------------------+
+; Analysis & Synthesis Messages ;
++-------------------------------+
+Info: *******************************************************************
+Info: Running Quartus Prime Analysis & Synthesis
+    Info: Version 22.1std.2 Build 922 07/20/2023 SC Lite Edition
+    Info: Processing started: Wed Nov 29 19:18:20 2023
+Info: Command: quartus_map --read_settings_files=on --write_settings_files=off PongFPGA -c PongFPGA
+Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
+Info (20030): Parallel compilation is enabled and will use 16 of the 16 processors detected
+Info (12021): Found 1 design units, including 1 entities, in source file display.v
+    Info (12023): Found entity 1: display File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/display.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file clockdivider.v
+    Info (12023): Found entity 1: ClockDivider File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/ClockDivider.v Line: 2
+Info (12021): Found 1 design units, including 1 entities, in source file vga.v
+    Info (12023): Found entity 1: VGA File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/VGA.v Line: 2
+Info (12021): Found 1 design units, including 1 entities, in source file pong.v
+    Info (12023): Found entity 1: Pong File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 2
+Warning (10236): Verilog HDL Implicit Net warning at Pong.v(74): created implicit net for "HEX2" File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 74
+Warning (10236): Verilog HDL Implicit Net warning at Pong.v(75): created implicit net for "HEX3" File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 75
+Info (12127): Elaborating entity "Pong" for the top level hierarchy
+Warning (10230): Verilog HDL assignment warning at Pong.v(85): truncated value with size 32 to match size of target (20) File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 85
+Warning (10230): Verilog HDL assignment warning at Pong.v(92): truncated value with size 32 to match size of target (10) File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 92
+Warning (10230): Verilog HDL assignment warning at Pong.v(95): truncated value with size 32 to match size of target (10) File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 95
+Warning (10230): Verilog HDL assignment warning at Pong.v(100): truncated value with size 32 to match size of target (10) File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 100
+Warning (10230): Verilog HDL assignment warning at Pong.v(103): truncated value with size 32 to match size of target (10) File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 103
+Warning (10230): Verilog HDL assignment warning at Pong.v(112): truncated value with size 32 to match size of target (10) File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 112
+Warning (10230): Verilog HDL assignment warning at Pong.v(113): truncated value with size 32 to match size of target (10) File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 113
+Warning (10230): Verilog HDL assignment warning at Pong.v(116): truncated value with size 32 to match size of target (10) File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 116
+Warning (10230): Verilog HDL assignment warning at Pong.v(117): truncated value with size 32 to match size of target (10) File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 117
+Warning (10230): Verilog HDL assignment warning at Pong.v(120): truncated value with size 32 to match size of target (10) File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 120
+Warning (10230): Verilog HDL assignment warning at Pong.v(121): truncated value with size 32 to match size of target (10) File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 121
+Warning (10230): Verilog HDL assignment warning at Pong.v(124): truncated value with size 32 to match size of target (10) File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 124
+Warning (10230): Verilog HDL assignment warning at Pong.v(125): truncated value with size 32 to match size of target (10) File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 125
+Warning (10230): Verilog HDL assignment warning at Pong.v(140): truncated value with size 32 to match size of target (4) File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 140
+Warning (10230): Verilog HDL assignment warning at Pong.v(147): truncated value with size 32 to match size of target (4) File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 147
+Info (12128): Elaborating entity "VGA" for hierarchy "VGA:vga_inst" File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 62
+Warning (10230): Verilog HDL assignment warning at VGA.v(25): truncated value with size 32 to match size of target (10) File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/VGA.v Line: 25
+Warning (10230): Verilog HDL assignment warning at VGA.v(34): truncated value with size 32 to match size of target (10) File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/VGA.v Line: 34
+Warning (10230): Verilog HDL assignment warning at VGA.v(46): truncated value with size 32 to match size of target (10) File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/VGA.v Line: 46
+Warning (10230): Verilog HDL assignment warning at VGA.v(55): truncated value with size 32 to match size of target (10) File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/VGA.v Line: 55
+Info (12128): Elaborating entity "display" for hierarchy "display:display_inst" File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 78
+Warning (13024): Output pins are stuck at VCC or GND
+    Warning (13410): Pin "HEX4[0]" is stuck at GND File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 13
+    Warning (13410): Pin "HEX4[1]" is stuck at GND File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 13
+    Warning (13410): Pin "HEX4[2]" is stuck at GND File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 13
+    Warning (13410): Pin "HEX4[3]" is stuck at GND File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 13
+    Warning (13410): Pin "HEX4[4]" is stuck at GND File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 13
+    Warning (13410): Pin "HEX4[5]" is stuck at GND File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 13
+    Warning (13410): Pin "HEX4[6]" is stuck at VCC File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 13
+    Warning (13410): Pin "HEX1[0]" is stuck at GND File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 14
+    Warning (13410): Pin "HEX1[1]" is stuck at GND File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 14
+    Warning (13410): Pin "HEX1[2]" is stuck at GND File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 14
+    Warning (13410): Pin "HEX1[3]" is stuck at GND File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 14
+    Warning (13410): Pin "HEX1[4]" is stuck at GND File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 14
+    Warning (13410): Pin "HEX1[5]" is stuck at GND File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 14
+    Warning (13410): Pin "HEX1[6]" is stuck at VCC File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 14
+Info (286030): Timing-Driven Synthesis is running
+Warning (20013): Ignored 59 assignments for entity "DE10_LITE_Default" -- entity does not exist in design
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to ARDUINO_IO[0] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to ARDUINO_IO[10] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to ARDUINO_IO[11] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to ARDUINO_IO[12] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to ARDUINO_IO[13] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to ARDUINO_IO[14] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to ARDUINO_IO[15] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to ARDUINO_IO[1] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to ARDUINO_IO[2] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to ARDUINO_IO[3] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to ARDUINO_IO[4] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to ARDUINO_IO[5] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to ARDUINO_IO[6] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to ARDUINO_IO[7] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to ARDUINO_IO[8] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to ARDUINO_IO[9] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V SCHMITT TRIGGER" -to ARDUINO_RESET_N -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[0] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[10] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[11] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[12] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[13] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[14] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[15] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[16] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[17] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[18] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[19] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[1] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[20] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[21] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[22] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[23] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[24] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[25] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[26] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[27] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[28] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[29] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[2] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[30] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[31] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[32] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[33] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[34] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[35] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[3] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[4] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[5] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[6] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[7] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[8] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GPIO[9] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GSENSOR_CS_N -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GSENSOR_INT[1] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GSENSOR_INT[2] -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GSENSOR_SCLK -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GSENSOR_SDI -entity DE10_LITE_Default was ignored
+    Warning (20014): Assignment for entity set_instance_assignment -name IO_STANDARD "2.5 V" -to GSENSOR_SDO -entity DE10_LITE_Default was ignored
+Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
+    Info (16011): Adding 0 node(s), including 0 DDIO, 0 PLL, 0 transceiver and 0 LCELL
+Warning (21074): Design contains 8 input pin(s) that do not drive logic
+    Warning (15610): No output dependent on input pin "SW[1]" File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 11
+    Warning (15610): No output dependent on input pin "SW[2]" File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 11
+    Warning (15610): No output dependent on input pin "SW[3]" File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 11
+    Warning (15610): No output dependent on input pin "SW[4]" File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 11
+    Warning (15610): No output dependent on input pin "SW[5]" File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 11
+    Warning (15610): No output dependent on input pin "SW[6]" File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 11
+    Warning (15610): No output dependent on input pin "SW[7]" File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 11
+    Warning (15610): No output dependent on input pin "SW[8]" File: C:/Users/Mohammad Mahfooz/Projects/PongFPGA/Pong.v Line: 11
+Info (21057): Implemented 440 device resources after synthesis - the final resource count might be different
+    Info (21058): Implemented 11 input pins
+    Info (21059): Implemented 42 output pins
+    Info (21061): Implemented 387 logic cells
+Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 106 warnings
+    Info: Peak virtual memory: 4846 megabytes
+    Info: Processing ended: Wed Nov 29 19:18:25 2023
+    Info: Elapsed time: 00:00:05
+    Info: Total CPU time (on all processors): 00:00:07
+
+
