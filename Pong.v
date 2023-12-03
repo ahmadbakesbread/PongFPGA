@@ -81,16 +81,16 @@ module Pong (
 			7'b0100: player1ScoreEncoding = 7'b0011001; // 4
 			7'b0101: player1ScoreEncoding = 7'b0010010; // 5
 			default: player1ScoreEncoding = 7'b0000000; // default to 0 for invalid input
-	endcase
+		endcase
 
-	case(player2Score)
-		7'b0000: player2ScoreEncoding = 7'b1000000; // 0
-		7'b0001: player2ScoreEncoding = 7'b1111001; // 1
-		7'b0010: player2ScoreEncoding = 7'b0100100; // 2
-		7'b0011: player2ScoreEncoding = 7'b0110000; // 3
-		7'b0100: player2ScoreEncoding = 7'b0011001; // 4
-		7'b0101: player2ScoreEncoding = 7'b0010010; // 5
-		default: player2ScoreEncoding = 7'b0000000; // default to 0 for invalid input
+		case(player2Score)
+			7'b0000: player2ScoreEncoding = 7'b1000000; // 0
+			7'b0001: player2ScoreEncoding = 7'b1111001; // 1
+			7'b0010: player2ScoreEncoding = 7'b0100100; // 2
+			7'b0011: player2ScoreEncoding = 7'b0110000; // 3
+			7'b0100: player2ScoreEncoding = 7'b0011001; // 4
+			7'b0101: player2ScoreEncoding = 7'b0010010; // 5
+			default: player2ScoreEncoding = 7'b0000000; // default to 0 for invalid input
 		endcase
 	end
 
