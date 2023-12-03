@@ -1,0 +1,113 @@
+------------------------------------------------------------
+Timing Analyzer Summary
+------------------------------------------------------------
+
+Type  : Slow 1200mV 85C Model Setup 'clk'
+Slack : -6.402
+TNS   : -144.589
+
+Type  : Slow 1200mV 85C Model Setup 'gameTickCounter[0]'
+Slack : -2.784
+TNS   : -106.512
+
+Type  : Slow 1200mV 85C Model Setup 'VGA:vga_inst|HS'
+Slack : -1.938
+TNS   : -30.249
+
+Type  : Slow 1200mV 85C Model Hold 'gameTickCounter[0]'
+Slack : 0.307
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'VGA:vga_inst|HS'
+Slack : 0.324
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'clk'
+Slack : 0.533
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'clk'
+Slack : -3.000
+TNS   : -68.988
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'gameTickCounter[0]'
+Slack : -1.222
+TNS   : -59.878
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'VGA:vga_inst|HS'
+Slack : -1.222
+TNS   : -26.884
+
+Type  : Slow 1200mV 0C Model Setup 'clk'
+Slack : -5.784
+TNS   : -127.828
+
+Type  : Slow 1200mV 0C Model Setup 'gameTickCounter[0]'
+Slack : -2.432
+TNS   : -91.968
+
+Type  : Slow 1200mV 0C Model Setup 'VGA:vga_inst|HS'
+Slack : -1.655
+TNS   : -25.505
+
+Type  : Slow 1200mV 0C Model Hold 'gameTickCounter[0]'
+Slack : 0.279
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'VGA:vga_inst|HS'
+Slack : 0.294
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'clk'
+Slack : 0.497
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'clk'
+Slack : -3.000
+TNS   : -68.988
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'gameTickCounter[0]'
+Slack : -1.222
+TNS   : -59.878
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'VGA:vga_inst|HS'
+Slack : -1.222
+TNS   : -26.884
+
+Type  : Fast 1200mV 0C Model Setup 'clk'
+Slack : -2.756
+TNS   : -49.077
+
+Type  : Fast 1200mV 0C Model Setup 'gameTickCounter[0]'
+Slack : -0.865
+TNS   : -26.330
+
+Type  : Fast 1200mV 0C Model Setup 'VGA:vga_inst|HS'
+Slack : -0.431
+TNS   : -3.917
+
+Type  : Fast 1200mV 0C Model Hold 'clk'
+Slack : 0.074
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'gameTickCounter[0]'
+Slack : 0.140
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'VGA:vga_inst|HS'
+Slack : 0.149
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'clk'
+Slack : -3.000
+TNS   : -59.437
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'gameTickCounter[0]'
+Slack : -1.000
+TNS   : -49.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'VGA:vga_inst|HS'
+Slack : -1.000
+TNS   : -22.000
+
+------------------------------------------------------------

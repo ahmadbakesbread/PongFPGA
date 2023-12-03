@@ -1,0 +1,18 @@
+Fitter Status : Successful - Wed Nov 29 19:18:33 2023
+Quartus Prime Version : 22.1std.2 Build 922 07/20/2023 SC Lite Edition
+Revision Name : PongFPGA
+Top-level Entity Name : Pong
+Family : MAX 10
+Device : 10M50DAF484C6GES
+Timing Models : Preliminary
+Total logic elements : 396 / 49,760 ( < 1 % )
+    Total combinational functions : 377 / 49,760 ( < 1 % )
+    Dedicated logic registers : 125 / 49,760 ( < 1 % )
+Total registers : 125
+Total pins : 53 / 360 ( 15 % )
+Total virtual pins : 0
+Total memory bits : 0 / 1,677,312 ( 0 % )
+Embedded Multiplier 9-bit elements : 0 / 288 ( 0 % )
+Total PLLs : 0 / 4 ( 0 % )
+UFM blocks : 0 / 1 ( 0 % )
+ADC blocks : 0 / 2 ( 0 % )
