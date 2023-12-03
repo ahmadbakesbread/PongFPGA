@@ -1,167 +1,287 @@
-`timescale 1ns / 1ps
-module Pong(
-    input wire clk,  // MAX10_CLK1_50
-
-    output wire VGA_HS,
-    output wire VGA_VS,
-    output wire [3:0] VGA_R,
-    output wire [3:0] VGA_G,
-    output wire [3:0] VGA_B,
-
-    input wire [9:0] SW,
-    output wire [6:0] HEX5,
-    output wire [6:0] HEX4,
-    output wire [6:0] HEX1,
-    output wire [6:0] HEX0
+module Pong (
+	// Clock input
+	input clk,
+	// Reset switch input
+	input resetSwitch,
+	// Player 1 paddle movement switch input
+	input playerSwitch,
+	// Player 2 paddle movement switch input
+	input player2Switch,
+	// Horizontal synchronization output
+	output hSync, 
+	// Vertical synchronization output
+	output vSync,
+	// RGB color components for display output
+	output [3:0] red, 
+	output [3:0] green, 
+	output [3:0] blue,
+	// Player 1 scoreboard output
+	output [6:0] playerScoreboard,
+	// Player 2 scoreboard output
+	output [6:0] player2Scoreboard
 );
 
-    // Constants
-    parameter ballSize = 16;
-    parameter paletHeight = 128;
-    parameter paletWidth = 16;
+	// Constants for game parameters
+	parameter BALL_SPEED = 1;
+	parameter BALL_START_X = 320;
+	parameter BALL_START_Y = 240;
+	parameter H_MIN = 140;
+	parameter H_MAX = 790;
+	parameter V_MIN = 30;
+	parameter V_MAX = 520;
 
-    // Colors
-    parameter ballColor = 12'hC3F;    // RGB: 4 bits each
-    parameter lPaletColor = 12'h4BF;  // Left paddle color
-    parameter rPaletColor = 12'hF44;  // Right paddle color
-    parameter backgroundColor = 12'hFFF;  // Background color
+	// Constants for logic parameters
+	localparam CLOCK_3HZ_PERIOD = 625_000;
+	localparam CLOCK_GAME_STATE_PERIOD = 25_000_000;
+	localparam PLAYER_SCORE_BITS = 7;
+	localparam SCORE_WIN_THRESHOLD = 5;
 
-    // VGA signals
-    wire [9:0] VGA_x, VGA_y;
-    wire pixel;
-    reg [11:0] color;
+	// Registers for internal state
+	reg resetRegister = 0;
+	reg [20:0] i = 0;
+	reg [20:0] j = 0;
+	reg [25:0] k = 0;
+	reg [3:0] redValue, greenValue, blueValue;
+	reg [15:0] ballPosX = BALL_START_X;
+	reg [15:0] ballPosY = BALL_START_Y;
+	reg ballXDir = 1;
+	reg ballYDir = 1;
+	reg [15:0] paddlePosX = 200;
+	reg [15:0] paddlePosY = 275;
+	reg [15:0] paddleBottom, paddleTop;
+	reg [15:0] paddle2PosX = 710;
+	reg [15:0] paddle2PosY = 275;
+	reg [15:0] paddle2Bottom, paddle2Top;
+	reg [5:0] paddleLength = 6'b101000;
+	reg [PLAYER_SCORE_BITS-1:0] player1Score = 7'b0000000;
+	reg [PLAYER_SCORE_BITS-1:0] player2Score = 7'b0000000;
+	reg clk25MHz = 0;
+	reg clk3Hz = 0;
+	reg clkGameState = 0;
+	reg enableVCounter;
+	reg [15:0] hCounter = 0;
+	reg [15:0] vCounter = 0;
+	reg[1:0] bounceVarianceX = 2'b01;
+	reg[1:0] bounceVarianceY = 2'b01;
 
-    // Paddle and Ball positions
-    reg [9:0] lPalet = 0;  // Left paddle position
-    reg [9:0] rPalet = 0;  // Right paddle position
-    reg [9:0] ball_x = 20; // Ball position X
-    reg [9:0] ball_y = 300;// Ball position Y
+	// Wire for reset condition
+	wire reset;
 
-    // Game logic signals
-    reg [1:0] ballDir = 2'b00; // Ball direction (00: right-up, 01: right-down, 10: left-up, 11: left-down)
-    reg [19:0] gameTickCounter = 0;
-    wire gameTick;
-    reg [3:0] lScore = 0;    // Left score
-    reg [3:0] rScore = 0;    // Right score
+	// Score display encoding
+	reg [6:0] player1ScoreEncoding;
+	reg [6:0] player2ScoreEncoding;
 
-    // Assign gameTick (100 Hz)
-    assign gameTick = (gameTickCounter == 500000); // Assuming 50 MHz clock
+	// Score display logic
+	always @(posedge clk) begin
+		case(player1Score)
+			7'b0000: player1ScoreEncoding = 7'b1000000; // 0
+			7'b0001: player1ScoreEncoding = 7'b1111001; // 1
+			7'b0010: player1ScoreEncoding = 7'b0100100; // 2
+			7'b0011: player1ScoreEncoding = 7'b0110000; // 3
+			7'b0100: player1ScoreEncoding = 7'b0011001; // 4
+			7'b0101: player1ScoreEncoding = 7'b0010010; // 5
+			default: player1ScoreEncoding = 7'b0000000; // default to 0 for invalid input
+	endcase
 
-    // VGA instantiation
-    VGA vga_inst (
-        .clk(clk),
-        .HS(VGA_HS),
-        .VS(VGA_VS),
-        .RGB_in(color),
-        .R_out(VGA_R),
-        .G_out(VGA_G),
-        .B_out(VGA_B),
-        .pixel(pixel),
-        .x(VGA_x),
-        .y(VGA_y)
-    );
+	case(player2Score)
+		7'b0000: player2ScoreEncoding = 7'b1000000; // 0
+		7'b0001: player2ScoreEncoding = 7'b1111001; // 1
+		7'b0010: player2ScoreEncoding = 7'b0100100; // 2
+		7'b0011: player2ScoreEncoding = 7'b0110000; // 3
+		7'b0100: player2ScoreEncoding = 7'b0011001; // 4
+		7'b0101: player2ScoreEncoding = 7'b0010010; // 5
+		default: player2ScoreEncoding = 7'b0000000; // default to 0 for invalid input
+		endcase
+	end
 
-    // Display (7-segment) instantiation
-    display display_inst (
-        .seg0(rScore),
-        .seg1(4'b0000),
-        .seg2(4'b0000),
-        .seg3(4'b0000),
-        .seg4(4'b0000),
-        .seg5(lScore),
-        .HEX0(HEX0),
-        .HEX1(HEX1),
-        .HEX2(HEX2),
-        .HEX3(HEX3),
-        .HEX4(HEX4),
-        .HEX5(HEX5)
-    );
+	// Assign score display values
+	assign playerScoreboard = {8'b00000000, player1ScoreEncoding};
+	assign player2Scoreboard = {8'b00000000, player2ScoreEncoding};
 
-    // Game tick counter
-    always @(posedge clk) begin
-        if (gameTickCounter >= 500000)
-            gameTickCounter <= 0;
-        else
-            gameTickCounter <= gameTickCounter + 1;
-    end
+	// Clock dividers for different frequencies
+	always @(posedge clk) begin
+		// Toggle 25MHz clock
+		clk25MHz <= ~clk25MHz;
+		// Divide the clock to achieve 3Hz frequency
+		if (j >= CLOCK_3HZ_PERIOD) begin
+			clk3Hz <= ~clk3Hz;
+			j <= 0;
+		end else begin
+			j <= j + BALL_SPEED;
+		end
+		// Divide the clock to achieve a slower frequency for game state handling
+		if (k >= CLOCK_GAME_STATE_PERIOD) begin
+			clkGameState = ~clkGameState;
+			k <= 0;
+		end else
+			k <= k + 1;
+	end
 
-    // Paddle movement logic
-    always @(posedge gameTick) begin
-        if (SW[9]) begin // Move left paddle up
-            if (lPalet > 0)
-                lPalet <= lPalet - 1;
-        end else begin // Move left paddle down
-            if (lPalet < 480 - paletHeight)
-                lPalet <= lPalet + 1;
-        end
+	// Horizontal counter for screen drawing
+	always @(posedge clk25MHz) begin
+		if (hCounter < 800) begin
+			hCounter <= hCounter + 1;
+			enableVCounter <= 0;
+		end
+		else begin
+			hCounter <= 0;
+			enableVCounter <= 1;
+		end
+	end
 
-        if (SW[0]) begin // Move right paddle up
-            if (rPalet > 0)
-                rPalet <= rPalet - 1;
-        end else begin // Move right paddle down
-            if (rPalet < 480 - paletHeight)
-                rPalet <= rPalet + 1;
-        end
-    end
+	// Vertical counter for screen drawing
+	always @(posedge clk25MHz) begin
+		if (enableVCounter == 1'b1) begin
+			if (vCounter < 525)
+				vCounter <= vCounter + 1;
+			else
+				vCounter <= 0;
+			end
+	end
+	
+	assign hSync = (hCounter < 96) ? 1 : 0;
+	assign vSync = (vCounter < 2) ? 1 : 0;
 
-    // Ball movement logic
-    always @(posedge gameTick) begin
-        // Update ball position based on direction
-        case (ballDir)
-            2'b00: begin // Right-Up
-                ball_x <= ball_x + 1;
-                ball_y <= ball_y - 1;
-            end
-            2'b01: begin // Right-Down
-                ball_x <= ball_x + 1;
-                ball_y <= ball_y + 1;
-            end
-            2'b10: begin // Left-Up
-                ball_x <= ball_x - 1;
-                ball_y <= ball_y - 1;
-            end
-            2'b11: begin // Left-Down
-                ball_x <= ball_x - 1;
-                ball_y <= ball_y + 1;
-            end
-        endcase
+	// Ball movement and collision handling
+	always @(posedge clk3Hz) begin
+		// Reset conditions when the reset switch is active
+		if (reset) begin
+			ballPosX = BALL_START_X;
+			ballPosY = BALL_START_Y;
+			ballXDir = 1;
+			ballYDir = 1;
+			player1Score <= 0;
+			player2Score = 0;
+		end
 
-        // Collision detection with walls
-        if (ball_y <= 0 || ball_y >= 480 - ballSize)
-            ballDir[0] <= ~ballDir[0]; // Invert Y direction
+		// Ball hit the left boundary, player 2 scores
+		if (ballPosX <= H_MIN + 1) begin
+			ballPosX = BALL_START_X;
+			ballPosY = BALL_START_Y;
+			ballXDir = 1;
+			ballYDir = 1;
+			player2Score = player2Score + 1;
+		end
 
-        // Collision detection with paddles
-        if (ball_x <= paletWidth && (ball_y >= lPalet && ball_y <= lPalet + paletHeight) ||
-            ball_x >= 640 - paletWidth - ballSize && (ball_y >= rPalet && ball_y <= rPalet + paletHeight))
-            ballDir[1] <= ~ballDir[1]; // Invert X direction
+		// Ball hit the right boundary, player 1 scores
+		if (ballPosX >= H_MAX - 1) begin
+			ballPosX = BALL_START_X + 300;
+			ballPosY = BALL_START_Y;
+			ballXDir = 0;
+			ballYDir = ~ballYDir;
+			player1Score <= player1Score + 1;
+		end
 
-        // Scoring logic
-        if (ball_x <= 0) begin
-            rScore <= rScore + 1;
-            ball_x <= 320;
-            ball_y <= 240;
-            ballDir <= 2'b00; // Reset to right-up
-        end
+		// Check collision with player 1 paddle
+		if (ballPosX >= paddlePosX && ballPosX <= paddlePosX + 1 && ballPosY >= paddleBottom && ballPosY <= paddleTop) begin
+			// Determine the direction of ball bounce
+			if ((playerSwitch && ballYDir) || (~playerSwitch && ~ballYDir)) begin
+				bounceVarianceY <= 2'b10;
+				bounceVarianceX <= 2'b01;
+			end else if ((playerSwitch && ~ballYDir) || (~playerSwitch && ~ballYDir)) begin
+				bounceVarianceX <= 2'b10;
+				bounceVarianceY <= 2'b01;
+			end else if ((player2Switch && ballYDir) || (~player2Switch && ~ballYDir)) begin
+				bounceVarianceY <= 2'b10;
+				bounceVarianceX <= 2'b01;
+			end else if ((player2Switch && ~ballYDir) || (~player2Switch && ~ballYDir)) begin
+				bounceVarianceX <= 2'b10;
+				bounceVarianceY <= 2'b01;
+			end else begin
+				bounceVarianceX <= 2'b01;
+				bounceVarianceY <= 2'b01;
+			end
+			// Change ball direction after collision
+			ballXDir = ~ballXDir;
+		end else if (ballPosX <= paddle2PosX && ballPosX >= paddle2PosX - 1 && ballPosY >= paddle2Bottom && ballPosY <= paddle2Top) begin
+			// Ball hit player 2 paddle, change direction
+				ballXDir = ~ballXDir;
+		end
 
-        if (ball_x >= 640 - ballSize) begin
-            lScore <= lScore + 1;
-            ball_x <= 320;
-            ball_y <= 240;
-            ballDir <= 2'b10; // Reset to left-up
-        end
-    end
+		// Ball hit top or bottom boundaries, change vertical direction
+		if (ballPosY >= (V_MAX - 3) || ballPosY <= (V_MIN + 3))
+			ballYDir = ~ballYDir;
 
-    // Pixel rendering logic
-    always @(*) begin
-        if ((VGA_x >= ball_x) && (VGA_x < ball_x + ballSize) && (VGA_y >= ball_y) && (VGA_y < ball_y + ballSize)) begin
-            color = ballColor;
-        end else if ((VGA_x <= paletWidth) && (VGA_y >= lPalet) && (VGA_y <= lPalet + paletHeight)) begin
-            color = lPaletColor;
-        end else if ((VGA_x >= 640 - paletWidth) && (VGA_y >= rPalet) && (VGA_y <= rPalet + paletHeight)) begin
-            color = rPaletColor;
-        end else begin
-            color = backgroundColor;
-        end
-    end
+		// Update ball position based on direction and variance
+		ballPosX = (ballXDir) ? ballPosX + bounceVarianceX : ballPosX - bounceVarianceX;
+		ballPosY = (ballYDir) ? ballPosY + bounceVarianceY : ballPosY - bounceVarianceY;
+	end
+
+	// Controlling player paddles
+	always @(posedge clk3Hz) begin
+		 // Controlling player 1's paddle
+		 if (~playerSwitch) begin
+			  // Switch is ON (1), move paddle up
+			  if (paddlePosY < V_MAX - paddleLength)
+					paddlePosY <= paddlePosY + 1;
+		 end else begin
+			  // Switch is OFF (0), move paddle down
+			  if (paddlePosY > V_MIN + paddleLength)
+					paddlePosY <= paddlePosY - 1;
+		 end
+
+		 // Update player 1 paddle top and bottom positions for collision detection
+		 paddleTop <= paddlePosY + paddleLength;
+		 paddleBottom <= paddlePosY - paddleLength;
+
+		 // Controlling player 2's paddle
+		 if (player2Switch) begin
+			  // Switch is ON (1), move paddle up
+			  if (paddle2PosY > V_MIN + paddleLength)
+					paddle2PosY <= paddle2PosY - 1;
+		 end else begin
+			  // Switch is OFF (0), move paddle down
+			  if (paddle2PosY < V_MAX - paddleLength)
+					paddle2PosY <= paddle2PosY + 1;
+		 end
+
+		 // Update player 2 paddle top and bottom positions for collision detection
+		 paddle2Top <= paddle2PosY + paddleLength;
+		 paddle2Bottom <= paddle2PosY - paddleLength;
+	end
+
+
+	// Game state handling
+	always @(posedge clkGameState) begin
+		// Reset the game state if the reset condition is triggered
+			if (resetRegister)
+				resetRegister = 0;
+
+		// Check for winning condition, reset the game if either player reaches a score of 9
+		if (player1Score >= SCORE_WIN_THRESHOLD || player2Score >= SCORE_WIN_THRESHOLD) begin
+			resetRegister = 1;
+		end
+	end
+	
+	assign reset = (resetRegister || resetSwitch);
+
+	// Drawing the scenario on the display
+	always @(posedge clk) begin              
+		// Draw the ball on the screen
+		if ((hCounter <= ballPosX + 3 && hCounter >= ballPosX && vCounter <= ballPosY + 2 && vCounter >= ballPosY - 2)) begin
+			redValue <= 4'hF;
+			greenValue <= 4'hA;
+			blueValue <= 4'hF;
+		// Draw the player 1 paddle
+		end else if (vCounter >= paddleBottom && vCounter <= paddleTop && hCounter == paddlePosX + 2) begin
+			redValue <= 4'h0;
+			greenValue <= 4'hF;
+			blueValue <= 4'h0;
+		// Draw the player 2 paddle
+		end else if (vCounter >= paddle2Bottom && vCounter <= paddle2Top && hCounter == paddle2PosX + 2) begin
+			redValue <= 4'hF;
+			greenValue <= 4'h0;
+			blueValue <= 4'h0;    
+		// Draw the background
+		end else if (hCounter < H_MAX && hCounter > H_MIN && vCounter < V_MAX && vCounter > V_MIN) begin
+			redValue <= 4'h0;
+			greenValue <= 4'h0;
+			blueValue <= 4'h0;
+		end
+	end
+
+	assign red = redValue;
+	assign green = greenValue;
+	assign blue = blueValue;
 
 endmodule
