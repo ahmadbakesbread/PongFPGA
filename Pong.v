@@ -1,27 +1,27 @@
 module Pong (
-	// Clock input
+	// clock input
 	input clk,
-	// Reset switch input
+	// reset switch input
 	input resetSwitch,
-	// Player 1 paddle movement switch input
+	// player 1 paddle movement switch input
 	input playerSwitch,
-	// Player 2 paddle movement switch input
+	// player 2 paddle movement switch input
 	input player2Switch,
-	// Horizontal synchronization output
+	// horizontal synchronization output
 	output hSync, 
-	// Vertical synchronization output
+	// vertical synchronization output
 	output vSync,
 	// RGB color components for display output
 	output [3:0] red, 
 	output [3:0] green, 
 	output [3:0] blue,
-	// Player 1 scoreboard output
+	// player 1 scoreboard output
 	output [6:0] playerScoreboard,
-	// Player 2 scoreboard output
+	// player 2 scoreboard output
 	output [6:0] player2Scoreboard
 );
 
-	// Constants for game parameters
+	// constants for game parameters
 	parameter BALL_SPEED = 1;
 	parameter BALL_START_X = 320;
 	parameter BALL_START_Y = 240;
@@ -30,13 +30,13 @@ module Pong (
 	parameter V_MIN = 30;
 	parameter V_MAX = 520;
 
-	// Constants for logic parameters
-	localparam CLOCK_3HZ_PERIOD = 625_000;
+	// constants for logic parameters
+	localparam CLOCK_GAME_PERIOD = 400_000;
 	localparam CLOCK_GAME_STATE_PERIOD = 25_000_000;
 	localparam PLAYER_SCORE_BITS = 7;
 	localparam SCORE_WIN_THRESHOLD = 5;
 
-	// Registers for internal state
+	// registers for internal state
 	reg resetRegister = 0;
 	reg [20:0] i = 0;
 	reg [20:0] j = 0;
@@ -56,22 +56,22 @@ module Pong (
 	reg [PLAYER_SCORE_BITS-1:0] player1Score = 7'b0000000;
 	reg [PLAYER_SCORE_BITS-1:0] player2Score = 7'b0000000;
 	reg clk25MHz = 0;
-	reg clk3Hz = 0;
+	reg clkGame = 0;
 	reg clkGameState = 0;
-	reg enableVCounter;
+	reg toggleVCounter;
 	reg [15:0] hCounter = 0;
 	reg [15:0] vCounter = 0;
 	reg[1:0] bounceVarianceX = 2'b01;
 	reg[1:0] bounceVarianceY = 2'b01;
 
-	// Wire for reset condition
+	// wire for reset condition
 	wire reset;
 
-	// Score display encoding
+	// score display encoding
 	reg [6:0] player1ScoreEncoding;
 	reg [6:0] player2ScoreEncoding;
 
-	// Score display logic
+	// score display logic
 	always @(posedge clk) begin
 		case(player1Score)
 			7'b0000: player1ScoreEncoding = 7'b1000000; // 0
@@ -80,7 +80,7 @@ module Pong (
 			7'b0011: player1ScoreEncoding = 7'b0110000; // 3
 			7'b0100: player1ScoreEncoding = 7'b0011001; // 4
 			7'b0101: player1ScoreEncoding = 7'b0010010; // 5
-			default: player1ScoreEncoding = 7'b0000000; // default to 0 for invalid input
+			default: player1ScoreEncoding = 7'b0000000; // default to 0 for unexpected input
 		endcase
 
 		case(player2Score)
@@ -90,26 +90,28 @@ module Pong (
 			7'b0011: player2ScoreEncoding = 7'b0110000; // 3
 			7'b0100: player2ScoreEncoding = 7'b0011001; // 4
 			7'b0101: player2ScoreEncoding = 7'b0010010; // 5
-			default: player2ScoreEncoding = 7'b0000000; // default to 0 for invalid input
+			default: player2ScoreEncoding = 7'b0000000; // default to 0 for unexpected input
 		endcase
 	end
 
-	// Assign score display values
+	// assign score display values
 	assign playerScoreboard = {8'b00000000, player1ScoreEncoding};
 	assign player2Scoreboard = {8'b00000000, player2ScoreEncoding};
 
-	// Clock dividers for different frequencies
+	// clock dividers
 	always @(posedge clk) begin
-		// Toggle 25MHz clock
+		// toggle 25MHz clock
 		clk25MHz <= ~clk25MHz;
-		// Divide the clock to achieve 3Hz frequency
-		if (j >= CLOCK_3HZ_PERIOD) begin
-			clk3Hz <= ~clk3Hz;
+		
+		// divide the clock further for game functions
+		if (j >= CLOCK_GAME_PERIOD) begin
+			clkGame <= ~clkGame;
 			j <= 0;
 		end else begin
 			j <= j + BALL_SPEED;
 		end
-		// Divide the clock to achieve a slower frequency for game state handling
+		
+		// divide the clock to achieve a slower frequency for game state handling
 		if (k >= CLOCK_GAME_STATE_PERIOD) begin
 			clkGameState = ~clkGameState;
 			k <= 0;
@@ -117,21 +119,21 @@ module Pong (
 			k <= k + 1;
 	end
 
-	// Horizontal counter for screen drawing
+	// horizontal counter for screen drawing
 	always @(posedge clk25MHz) begin
 		if (hCounter < 800) begin
 			hCounter <= hCounter + 1;
-			enableVCounter <= 0;
+			toggleVCounter <= 0;
 		end
 		else begin
 			hCounter <= 0;
-			enableVCounter <= 1;
+			toggleVCounter <= 1;
 		end
 	end
 
-	// Vertical counter for screen drawing
+	// vertical counter for screen drawing
 	always @(posedge clk25MHz) begin
-		if (enableVCounter == 1'b1) begin
+		if (toggleVCounter == 1'b1) begin
 			if (vCounter < 525)
 				vCounter <= vCounter + 1;
 			else
@@ -142,9 +144,9 @@ module Pong (
 	assign hSync = (hCounter < 96) ? 1 : 0;
 	assign vSync = (vCounter < 2) ? 1 : 0;
 
-	// Ball movement and collision handling
-	always @(posedge clk3Hz) begin
-		// Reset conditions when the reset switch is active
+	// ball movement and collision handling
+	always @(posedge clkGame) begin
+		// reset conditions when the reset switch is active
 		if (reset) begin
 			ballPosX = BALL_START_X;
 			ballPosY = BALL_START_Y;
@@ -154,7 +156,7 @@ module Pong (
 			player2Score = 0;
 		end
 
-		// Ball hit the left boundary, player 2 scores
+		// ball hit the left boundary, player 2 scores
 		if (ballPosX <= H_MIN + 1) begin
 			ballPosX = BALL_START_X;
 			ballPosY = BALL_START_Y;
@@ -163,7 +165,7 @@ module Pong (
 			player2Score = player2Score + 1;
 		end
 
-		// Ball hit the right boundary, player 1 scores
+		// ball hit the right boundary, player 1 scores
 		if (ballPosX >= H_MAX - 1) begin
 			ballPosX = BALL_START_X + 300;
 			ballPosY = BALL_START_Y;
@@ -172,9 +174,9 @@ module Pong (
 			player1Score <= player1Score + 1;
 		end
 
-		// Check collision with player 1 paddle
+		// check collision with player 1 paddle
 		if (ballPosX >= paddlePosX && ballPosX <= paddlePosX + 1 && ballPosY >= paddleBottom && ballPosY <= paddleTop) begin
-			// Determine the direction of ball bounce
+			// determine the direction of ball bounce
 			if ((playerSwitch && ballYDir) || (~playerSwitch && ~ballYDir)) begin
 				bounceVarianceY <= 2'b10;
 				bounceVarianceX <= 2'b01;
@@ -191,63 +193,63 @@ module Pong (
 				bounceVarianceX <= 2'b01;
 				bounceVarianceY <= 2'b01;
 			end
-			// Change ball direction after collision
+			// change ball direction after collision
 			ballXDir = ~ballXDir;
 		end else if (ballPosX <= paddle2PosX && ballPosX >= paddle2PosX - 1 && ballPosY >= paddle2Bottom && ballPosY <= paddle2Top) begin
-			// Ball hit player 2 paddle, change direction
+			// ball hit player 2 paddle, change direction
 				ballXDir = ~ballXDir;
 		end
 
-		// Ball hit top or bottom boundaries, change vertical direction
+		// ball hit top or bottom boundaries, change vertical direction
 		if (ballPosY >= (V_MAX - 3) || ballPosY <= (V_MIN + 3))
 			ballYDir = ~ballYDir;
 
-		// Update ball position based on direction and variance
+		// update ball position based on direction and variance
 		ballPosX = (ballXDir) ? ballPosX + bounceVarianceX : ballPosX - bounceVarianceX;
 		ballPosY = (ballYDir) ? ballPosY + bounceVarianceY : ballPosY - bounceVarianceY;
 	end
 
-	// Controlling player paddles
-	always @(posedge clk3Hz) begin
-		 // Controlling player 1's paddle
+	// controlling player paddles
+	always @(posedge clkGame) begin
+		 // controlling player 1's paddle
 		 if (~playerSwitch) begin
-			  // Switch is ON (1), move paddle up
+			  // switch is ON (1), move paddle up
 			  if (paddlePosY < V_MAX - paddleLength)
 					paddlePosY <= paddlePosY + 1;
 		 end else begin
-			  // Switch is OFF (0), move paddle down
+			  // switch is OFF (0), move paddle down
 			  if (paddlePosY > V_MIN + paddleLength)
 					paddlePosY <= paddlePosY - 1;
 		 end
 
-		 // Update player 1 paddle top and bottom positions for collision detection
+		 // update player 1 paddle top and bottom positions for collision detection
 		 paddleTop <= paddlePosY + paddleLength;
 		 paddleBottom <= paddlePosY - paddleLength;
 
-		 // Controlling player 2's paddle
+		 // controlling player 2's paddle
 		 if (player2Switch) begin
-			  // Switch is ON (1), move paddle up
+			  // switch is ON (1), move paddle up
 			  if (paddle2PosY > V_MIN + paddleLength)
 					paddle2PosY <= paddle2PosY - 1;
 		 end else begin
-			  // Switch is OFF (0), move paddle down
+			  // switch is OFF (0), move paddle down
 			  if (paddle2PosY < V_MAX - paddleLength)
 					paddle2PosY <= paddle2PosY + 1;
 		 end
 
-		 // Update player 2 paddle top and bottom positions for collision detection
+		 // update player 2 paddle top and bottom positions for collision detection
 		 paddle2Top <= paddle2PosY + paddleLength;
 		 paddle2Bottom <= paddle2PosY - paddleLength;
 	end
 
 
-	// Game state handling
+	// game state handling
 	always @(posedge clkGameState) begin
-		// Reset the game state if the reset condition is triggered
-			if (resetRegister)
-				resetRegister = 0;
+		// reset the game state if the reset condition is triggered
+		if (resetRegister)
+			resetRegister = 0;
 
-		// Check for winning condition, reset the game if either player reaches a score of 9
+		// check for winning condition, reset the game if either player reaches a score of 9
 		if (player1Score >= SCORE_WIN_THRESHOLD || player2Score >= SCORE_WIN_THRESHOLD) begin
 			resetRegister = 1;
 		end
@@ -255,24 +257,24 @@ module Pong (
 	
 	assign reset = (resetRegister || resetSwitch);
 
-	// Drawing the scenario on the display
+	// drawing scenario on vga display
 	always @(posedge clk) begin              
-		// Draw the ball on the screen
+		// draw ball on screen
 		if ((hCounter <= ballPosX + 3 && hCounter >= ballPosX && vCounter <= ballPosY + 2 && vCounter >= ballPosY - 2)) begin
 			redValue <= 4'hF;
 			greenValue <= 4'hA;
 			blueValue <= 4'hF;
-		// Draw the player 1 paddle
+		// draw player 1's paddle
 		end else if (vCounter >= paddleBottom && vCounter <= paddleTop && hCounter == paddlePosX + 2) begin
 			redValue <= 4'h0;
 			greenValue <= 4'hF;
 			blueValue <= 4'h0;
-		// Draw the player 2 paddle
+		// draw player 2's paddle
 		end else if (vCounter >= paddle2Bottom && vCounter <= paddle2Top && hCounter == paddle2PosX + 2) begin
 			redValue <= 4'hF;
 			greenValue <= 4'h0;
 			blueValue <= 4'h0;    
-		// Draw the background
+		// draw background
 		end else if (hCounter < H_MAX && hCounter > H_MIN && vCounter < V_MAX && vCounter > V_MIN) begin
 			redValue <= 4'h0;
 			greenValue <= 4'h0;
