@@ -98,7 +98,7 @@ module Pong (
 	assign playerScoreboard = {8'b00000000, player1ScoreEncoding};
 	assign player2Scoreboard = {8'b00000000, player2ScoreEncoding};
 
-	// clock dividers
+	// clock dividers, modified from lab code
 	always @(posedge clk) begin
 		// toggle 25MHz clock
 		clk25MHz <= ~clk25MHz;
@@ -256,11 +256,23 @@ module Pong (
 	end
 	
 	assign reset = (resetRegister || resetSwitch);
+	
 
 	// drawing scenario on vga display
-	always @(posedge clk) begin              
+	always @(posedge clk) begin
+	
+		// player 1 wins
+		if (player1Score >= SCORE_WIN_THRESHOLD) begin
+			redValue <= 4'h0;
+			greenValue <= 4'hF;
+			blueValue <= 4'h0;
+		// player 2 wins
+		end else if (player2Score >= SCORE_WIN_THRESHOLD) begin
+			redValue <= 4'hF;
+			greenValue <= 4'h0;
+			blueValue <= 4'h0; 
 		// draw ball on screen
-		if ((hCounter <= ballPosX + 3 && hCounter >= ballPosX && vCounter <= ballPosY + 2 && vCounter >= ballPosY - 2)) begin
+		end else if ((hCounter <= ballPosX + 3 && hCounter >= ballPosX && vCounter <= ballPosY + 2 && vCounter >= ballPosY - 2)) begin
 			redValue <= 4'hF;
 			greenValue <= 4'hA;
 			blueValue <= 4'hF;
