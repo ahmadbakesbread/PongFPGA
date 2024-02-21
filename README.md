@@ -30,10 +30,17 @@ Welcome to PongFPGA! This project brings the nostalgic joy of the classic Pong g
 3. 🔧 Follow the setup instructions in `devkits/readme.txt`.
 4. 🚀 Compile and upload to your FPGA board.
 
-## Let's Play!
+## Let's Play! 🎮
 - Connect your FPGA board to a VGA display.
 - Grab a friend and use the switches to control your paddles.
-- Enjoy the game as it unfolds on your screen!
+- Enjoy the game as it unfolds on your screen!]
+
+## Demo Video 🎥
+
+▶️ Click on the image below to watch the PongFPGA game in action: 
+
+[![Watch the video](https://img.youtube.com/vi/6z91HN31y_A/0.jpg)](https://www.youtube.com/watch?v=6z91HN31y_A)
+
 
 ## Contributing
 Got ideas to make PongFPGA even better? Contributions are welcome! Check out our contributing guidelines for more information.
